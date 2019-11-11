@@ -6,13 +6,13 @@ typedef struct node
     int root;
     int endpoint;
     int weight;
-} Vertex;
+} Edge;
 
 // Flexible adjacency list representation
 typedef struct flexible_al_t
 {
     // Array of neighbors
-    Vertex* neighbors;
+    Edge* neighbors;
 
     // Next array of neighbors in flexible adjacency list
     flexible_al* next;
