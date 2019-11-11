@@ -1,7 +1,12 @@
 #ifndef __GRAPH_H__
 #define __GRAPH_H__
 
-using Vertex = int;
+typedef struct node
+{
+    int root;
+    int endpoint;
+    int weight;
+} Vertex;
 
 // Flexible adjacency list representation
 typedef struct flexible_al_t
