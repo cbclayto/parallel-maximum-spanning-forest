@@ -6,7 +6,7 @@ OUTPUTDIR := bin/
 CFLAGS := -std=c++11 -fvisibility=hidden -lpthread
 
 ifeq (,$(CONFIGURATION))
-	CONFIGURATION := release
+	CONFIGURATION := solver
 endif
 
 ifeq (debug,$(CONFIGURATION))

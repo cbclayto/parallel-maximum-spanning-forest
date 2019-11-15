@@ -30,24 +30,24 @@ public:
 
 /* Getters */
 static inline int num_nodes(const Graph&);
-static inline int num_edges(const GraphG);
+static inline int num_edges(const Graph&);
 
-static inline const Vertex* begin(const Graph, Vertex);
-static inline const Vertex* end(const Graph, Vertex);
-static inline int degree(const Graph, Vertex);
+//static inline const Vertex* begin(const Graph, Vertex);
+//static inline const Vertex* end(const Graph, Vertex);
+//static inline int degree(const Graph, Vertex);
 
 
 /* IO */
-Graph& load_graph(const char* filename);
+std::shared_ptr<Graph> load_graph(const char* filename);
 
-Graph load_graph_binary(const char* filename);
-void store_graph_binary(const char* filename, Graph);
+//Graph load_graph_binary(const char* filename);
+//void store_graph_binary(const char* filename, Graph);
 
-void print_graph(const graph*);
+//void print_graph(const graph*);
 
 
 /* Deallocation */
-void free_graph(Graph);
+//void free_graph(Graph);
 
 
 /* Included here to enable inlining. Don't look. */

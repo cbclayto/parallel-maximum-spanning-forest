@@ -1,39 +1,43 @@
-#include "world.h"
-#include <fstream>
-#include <sstream>
+#include <cstdlib>
+#include <vector>
+#include <memory>
 #include <iostream>
 #include <string.h>
-#include <iomanip>
 #include "timing.h"
 #include "graph.h"
 
 int main(int argc, const char** argv)
 {
-    char* inputFile = NULL;
+    const char* inputFile = NULL;
     for (int i = 0; i < argc; i++) {
         if (strcmp(argv[i], "-i") == 0)
-            *inputFile = argv[i+1]
+            inputFile = argv[i+1];
     }
 
-    if (inputFile == NULL)
+    if (inputFile == NULL) {
         std::cout << "Error: must specify input file with -i\n";
-    return 1;
+        return 1;
+    }
 
-    Graph g = loadGraph(inputFile); // function doesn't exist yet
+    std::shared_ptr<Graph> G = load_graph(inputFile);
 
 
     // run, time, and check correctness
+    /*
     Timer t;
-    MST res = Boruvka(g);
+    MST res = Boruvka(G);
     double totalTime = t.elapsed();
 
-    if (checkCorrectness(res, g)) {
-        printf("MST computed successfully!\n");
+    if (checkCorrectness(res, G)) {
+        std::cout << "MST computed successfully!\n";
     } else {
-        printf("Correctness failed.");
+        std::cout << "Correctness failed.";
     }
 
     printf("Total time: %.6fms", totalTime);
+    */
+
+    std::cout << "Done!\n";
 
     return 0;
 }
