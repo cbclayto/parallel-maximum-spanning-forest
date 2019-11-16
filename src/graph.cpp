@@ -12,9 +12,10 @@ static inline int num_edges(const Graph& graph) {
     return graph.num_edges;
 }
 
+// build a graph from a text file
 std::shared_ptr<Graph> load_graph(const char* filename) {
     std::shared_ptr<Graph> G = std::make_shared<Graph>();
-    std::vector<flexible_al*> edges; // = new std::vector<flexible_al>;
+    std::vector<std::shared_ptr<flexible_al>> edges; // = new std::vector<flexible_al>;
 
     std::ifstream graph_file;
     graph_file.open(filename);
@@ -40,7 +41,7 @@ std::shared_ptr<Graph> load_graph(const char* filename) {
 
     for (int i = 0; i < num_nodes; i++) {
         std::shared_ptr<flexible_al> f = std::make_shared<flexible_al>();
-        std::vector<Edge> n;
+        std::vector<std::shared_ptr<Edge>> n;
         f->neighbors = n;
         f->next = NULL;
         edges[i] = f;
@@ -51,7 +52,7 @@ std::shared_ptr<Graph> load_graph(const char* filename) {
         buffer.clear();
         std::getline(graph_file, buffer);
 
-        if (buffer.size() <= 0) contine; // skip blank lines
+        if (buffer.size() <= 0) continue; // skip blank lines
 
         // parse edge
         std::stringstream parse(buffer);
@@ -63,6 +64,11 @@ std::shared_ptr<Graph> load_graph(const char* filename) {
         parse >> v;
         if (parse.fail()) break;
         parse >> wt;
+
+        // vertices in file are 1-indexed
+        // make them 0-indexed
+        u--;
+        v--;
 
         // construct edge
         std::shared_ptr<Edge> e1 = std::make_shared<Edge>();
@@ -84,4 +90,29 @@ std::shared_ptr<Graph> load_graph(const char* filename) {
     G->num_nodes = num_nodes;
     G->edges = edges;
     return G;
+}
+
+void print_graph(std::shared_ptr<Graph> G, bool print_weights) {
+    std::cout << G->num_nodes << " vertices\n";
+    std::cout << G->num_edges << " edges\n";
+    for (int i = 0; i < G->num_nodes; i++) {
+        std::cout << i << ": <";
+        std::shared_ptr<flexible_al> adj_list = G->edges[i];
+        
+        while (adj_list != NULL) {
+            std::vector<std::shared_ptr<Edge>> neighbors = adj_list->neighbors;
+            for (int j = 0; j < (int)neighbors.size(); j++) {
+                std::shared_ptr<Edge> e = neighbors[j];
+
+                if (j > 0) std::cout << ", ";
+                if (print_weights) {
+                    std::cout << "(" << e->endpoint << ", " << e->weight << ")";
+                } else {
+                    std::cout << e->endpoint;
+                }
+            }
+            adj_list = adj_list->next;
+        }
+        std::cout << ">\n";
+    }
 }

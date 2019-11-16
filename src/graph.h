@@ -1,3 +1,6 @@
+#include <vector>
+#include <memory>
+
 class Edge {
 public:
     int root;
@@ -9,10 +12,10 @@ public:
 class flexible_al {
 public:
     // Array of neighbors
-    std::vector<Edge> neighbors;
+    std::vector<std::shared_ptr<Edge>> neighbors;
 
     // Next array of neighbors in flexible adjacency list
-    flexible_al *next;
+    std::shared_ptr<flexible_al> next;
 };
 
 class Graph {
@@ -23,7 +26,7 @@ public:
     int num_nodes;
 
     // Flexible adjacency list
-    std::vector<flexible_al> edges;
+    std::vector<std::shared_ptr<flexible_al>> edges;
 };
 
 //using Graph = graph*;
@@ -43,7 +46,7 @@ std::shared_ptr<Graph> load_graph(const char* filename);
 //Graph load_graph_binary(const char* filename);
 //void store_graph_binary(const char* filename, Graph);
 
-//void print_graph(const graph*);
+void print_graph(std::shared_ptr<Graph>, bool print_weights);
 
 
 /* Deallocation */

@@ -1,6 +1,4 @@
 #include <cstdlib>
-#include <vector>
-#include <memory>
 #include <iostream>
 #include <string.h>
 #include "timing.h"
@@ -21,6 +19,7 @@ int main(int argc, const char** argv)
 
     std::shared_ptr<Graph> G = load_graph(inputFile);
 
+    print_graph(G, false);
 
     // run, time, and check correctness
     /*
@@ -36,8 +35,6 @@ int main(int argc, const char** argv)
 
     printf("Total time: %.6fms", totalTime);
     */
-
-    std::cout << "Done!\n";
 
     return 0;
 }
