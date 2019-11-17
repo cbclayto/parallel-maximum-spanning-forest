@@ -17,8 +17,10 @@ int main(int argc, const char** argv)
         return 1;
     }
 
+    //std::shared_ptr<FAL_Graph> G_fal = load_FAL_graph(inputFile);
     std::shared_ptr<Graph> G = load_graph(inputFile);
 
+    //print_FAL_graph(G_fal, false);
     print_graph(G, false);
 
     // run, time, and check correctness
