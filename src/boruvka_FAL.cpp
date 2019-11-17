@@ -11,8 +11,8 @@ int boruvkas(Graph *graph)
     Edge *best_edges = malloc(num_components*sizeof(Edge));
     int *component_labels = malloc(graph->num_nodes*sizeof(int));
     for (int i=0; i < num_components; i++){
-       components[i] = graph->edges[i]; //Maybe rename edges? NEED TO ACTUALLY DEEP COPY?
-       tails[i] = components[i];
+       components[i] = graph->edges[i];
+       tails[i] = &components[i];
        component_labels[i] = i;
     }
     int tree_cost = 0;
@@ -36,7 +36,7 @@ int boruvkas(Graph *graph)
                component_labels[child] = parent;
                //Merge Components
                tree_cost += this_edge->weight;
-               tails[parent]->next = components[child];
+               tails[parent]->next = &components[child];
                tails[parent] = tails[child];
             }
         }
@@ -59,7 +59,7 @@ int boruvkas(Graph *graph)
 }
 
 Edge find_best_edge(int i, flexible_al *components, int num_components){
-    Edge cheapest_edge = null;
+    Edge cheapest_edge = NULL;
     flexible_al *curr = components;
     for (flexible_al *curr = components, curr != null; curr = curr->next) {
         for (int i = 0; i < curr->neighbors.size(); i+=1){
