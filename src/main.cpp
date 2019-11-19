@@ -3,6 +3,7 @@
 #include <string.h>
 #include "timing.h"
 #include "graph.h"
+#include "boruvka.h"
 
 int main(int argc, const char** argv)
 {
@@ -22,6 +23,8 @@ int main(int argc, const char** argv)
 
     //print_FAL_graph(G_fal, false);
     print_graph(G, false);
+
+    int mst_weight = boruvka(G);
 
     // run, time, and check correctness
     /*

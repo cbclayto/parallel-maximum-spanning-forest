@@ -1,13 +1,15 @@
 #include <string>
 #include <cstdlib>
 
-#include "graph.h"
+#include "boruvka.h"
 
-int boruvkas(Graph *graph){
+int boruvka(std::shared_ptr<Graph> graph){
    int num_nodes = graph->num_nodes;
    int num_components = num_nodes;
-   int *component_labels = malloc(sizeof(int) * num_nodes);
-   Edge **best_edges = malloc(sizeof(Edge *) * num_components);
+   int *component_labels = (int*)malloc(sizeof(int) * num_nodes);
+   std::vector<std::shared_ptr<Edge>> best_edges;
+   best_edges.resize(num_components);
+   //Edge **best_edges = (Edge**)malloc(sizeof(Edge*) * num_components);
    for (int i = 0; i < num_nodes; i++){
      component_labels[i] = i;
    }
@@ -18,22 +20,22 @@ int boruvkas(Graph *graph){
       }
       //Find cheapest edges
       for (int i = 0; i < num_nodes; i++){
-          std::vector<Edge> these_edges = graph->edges[i];
+          std::vector<std::shared_ptr<Edge>> these_edges = graph->edges[i];
           for (int j = 0; j < these_edges.size(); j++){
-             Edge *this_edge = these_edges[j];
+             std::shared_ptr<Edge> this_edge = these_edges[j];
              if (component_labels[this_edge->root] != 
                      component_labels[this_edge->endpoint]){
                  int component = component_labels[i];
                  //all the clauses are needed for consistency
                  if (best_edges[component] == NULL ||
-                         best_edge[component]->weight < this_edge->weight ||
-                         (best_edge[component]->weight == this_edge->weight &&
-                          best_edge[component]->root < this_edge->root) ||
-                         (best_edge[component]->weight == this_edge->weight &&
-                          best_edge[component]->root == this_edge->root &&
-                          best_edge[component]->endpoint == this_edge->endpoint)) {
+                         best_edges[component]->weight < this_edge->weight ||
+                         (best_edges[component]->weight == this_edge->weight &&
+                          best_edges[component]->root < this_edge->root) ||
+                         (best_edges[component]->weight == this_edge->weight &&
+                          best_edges[component]->root == this_edge->root &&
+                          best_edges[component]->endpoint == this_edge->endpoint)) {
                      //lock will be needed in parallel version of this
-                     best_edges[component] = &this_edge;
+                     best_edges[component] = this_edge;
                  }
              }
 
@@ -42,7 +44,7 @@ int boruvkas(Graph *graph){
       //Merge Edges
       bool all_null = true;
       for (int i = 0; i < num_nodes; i++) { //Don't trivially parallelize this
-         Edge *best_edge = best_edges[i];
+         std::shared_ptr<Edge> best_edge = best_edges[i];
          if (best_edge != NULL){
              all_null = false;
              //We need to check again in case two components had the same edge
@@ -63,6 +65,7 @@ int boruvkas(Graph *graph){
       }
       if (all_null) {
       //We are done!
+          free(component_labels);
           return total_cost;
       }
    }
