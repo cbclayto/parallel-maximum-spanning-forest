@@ -1,5 +1,6 @@
 #include <string>
 #include <cstdlib>
+#include <iostream>
 
 #include "boruvka.h"
 
@@ -9,7 +10,6 @@ int boruvka(std::shared_ptr<Graph> graph){
    int *component_labels = (int*)malloc(sizeof(int) * num_nodes);
    std::vector<std::shared_ptr<Edge>> best_edges;
    best_edges.resize(num_components);
-   //Edge **best_edges = (Edge**)malloc(sizeof(Edge*) * num_components);
    for (int i = 0; i < num_nodes; i++){
      component_labels[i] = i;
    }
@@ -21,7 +21,7 @@ int boruvka(std::shared_ptr<Graph> graph){
       //Find cheapest edges
       for (int i = 0; i < num_nodes; i++){
           std::vector<std::shared_ptr<Edge>> these_edges = graph->edges[i];
-          for (int j = 0; j < these_edges.size(); j++){
+          for (int j = 0; j < (int)these_edges.size(); j++){
              std::shared_ptr<Edge> this_edge = these_edges[j];
              if (component_labels[this_edge->root] != 
                      component_labels[this_edge->endpoint]){
@@ -51,7 +51,7 @@ int boruvka(std::shared_ptr<Graph> graph){
              if (component_labels[best_edge->root] != 
                      component_labels[best_edge->endpoint]){
                  total_cost += best_edge->weight;
-                 int old_label = std::min(component_labels[best_edge->root], 
+                 int old_label = std::max(component_labels[best_edge->root], 
                                                 component_labels[best_edge->endpoint]);
                  int new_label = std::min(component_labels[best_edge->root], 
                                                 component_labels[best_edge->endpoint]);

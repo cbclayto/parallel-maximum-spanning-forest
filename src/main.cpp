@@ -22,9 +22,10 @@ int main(int argc, const char** argv)
     std::shared_ptr<Graph> G = load_graph(inputFile);
 
     //print_FAL_graph(G_fal, false);
-    print_graph(G, false);
+    print_graph(G, true);
 
     int mst_weight = boruvka(G);
+    std::cout << "MST weight: " << mst_weight << "\n";
 
     // run, time, and check correctness
     /*
