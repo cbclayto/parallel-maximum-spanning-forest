@@ -23,25 +23,34 @@ int main(int argc, const char** argv)
     std::shared_ptr<Graph> G = load_graph(inputFile);
 
     //print_FAL_graph(G_fal, false);
-    print_graph(G, true);
-
-    int mst_weight = prims(G);
-    std::cout << "MST weight: " << mst_weight << "\n";
+    //print_graph(G, true);
 
     // run, time, and check correctness
-    /*
     Timer t;
-    MST res = Boruvka(G);
-    double totalTime = t.elapsed();
 
+    std::cout << "Prim's:\n";
+    int prim_weight = prims(G);
+    double primTime = t.elapsed();
+    std::cout << "\tMST weight: " << prim_weight << "\n";
+    printf("\tTime: %.6fms\n\n", primTime);
+
+    std::cout << "Boruvka's:\n";
+    t.reset();
+    int boruvka_weight = boruvka(G);
+    double boruvkaTime = t.elapsed();
+    std::cout << "\tMST weight: " << boruvka_weight << "\n";
+    printf("\tTime: %.6fms\n", boruvkaTime);
+    
+
+    /*
     if (checkCorrectness(res, G)) {
         std::cout << "MST computed successfully!\n";
     } else {
         std::cout << "Correctness failed.";
     }
-
-    printf("Total time: %.6fms", totalTime);
     */
+
+    
 
     return 0;
 }

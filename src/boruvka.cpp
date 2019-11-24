@@ -1,6 +1,5 @@
 #include <string>
 #include <cstdlib>
-#include <iostream>
 
 #include "boruvka.h"
 
