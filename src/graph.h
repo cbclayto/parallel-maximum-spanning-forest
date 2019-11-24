@@ -1,3 +1,6 @@
+#ifndef __GRAPH_H__
+#define __GRAPH_H__
+
 #include <vector>
 #include <memory>
 
@@ -52,8 +55,8 @@ public:
 
 
 /* IO */
-std::shared_ptr<Graph> load_graph(const char* filename);
-std::shared_ptr<FAL_Graph> load_FAL_graph(const char* filename);
+std::shared_ptr<Graph> load_graph(const char*);
+std::shared_ptr<FAL_Graph> load_FAL_graph(const char*);
 
 //Graph load_graph_binary(const char* filename);
 //void store_graph_binary(const char* filename, Graph);
@@ -69,3 +72,5 @@ void print_FAL_graph(std::shared_ptr<FAL_Graph>, bool print_weights);
 
 /* Included here to enable inlining. Don't look. */
 //#include "graph_internal.h"
+
+#endif
