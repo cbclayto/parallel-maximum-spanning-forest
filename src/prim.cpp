@@ -1,7 +1,8 @@
 #include <string>
 #include <cstdlib>
+#include <limits.h>
 
-#include "graph.h"
+#include "prim.h"
 
 int find_nearest(int *dists, int dist_len){
    int nearest = 0;
@@ -14,17 +15,19 @@ int find_nearest(int *dists, int dist_len){
    }
 }
 
-int prims(Graph *graph){
+int prims(std::shared_ptr<Graph> graph){
     int num_nodes = graph->num_nodes;
-    int *dists = malloc(num_nodes * sizeof(int));
+    int *dists = (int*)malloc(num_nodes * sizeof(int));
     for (int i = 0; i < num_nodes; i++){
        dists[i] = INT_MAX;
     }
     int total_cost = 0;
     //Add node 0 right away
     dists[0] = INT_MIN;
+
+    std::vector<std::vector<std::shared_ptr<Edge>>> edges = graph->edges;
     for (int i = 0; i < edges[0].size(); i++){
-        dists[edges[0][i].endpoint] = edges[0][i].weight;
+        dists[edges[0][i]->endpoint] = edges[0][i]->weight;
     } 
     //add n-1 more nodes
     for (int i = 1; i < num_nodes; i++) {
@@ -32,8 +35,8 @@ int prims(Graph *graph){
         total_cost += dists[nearest];
         dists[nearest] = INT_MIN;
         for (int j = 0; j < edges[nearest].size(); j++){
-            int vertex = edges[nearest][j].endpoint;
-            int weight = edges[nearest][j].weight;
+            int vertex = edges[nearest][j]->endpoint;
+            int weight = edges[nearest][j]->weight;
             dists[vertex] = std::min(weight, dists[vertex]);
         }
     }

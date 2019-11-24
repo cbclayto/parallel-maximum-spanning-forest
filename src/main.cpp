@@ -4,6 +4,7 @@
 #include "timing.h"
 #include "graph.h"
 #include "boruvka.h"
+#include "prim.h"
 
 int main(int argc, const char** argv)
 {
@@ -24,7 +25,7 @@ int main(int argc, const char** argv)
     //print_FAL_graph(G_fal, false);
     print_graph(G, true);
 
-    int mst_weight = boruvka(G);
+    int mst_weight = prims(G);
     std::cout << "MST weight: " << mst_weight << "\n";
 
     // run, time, and check correctness
