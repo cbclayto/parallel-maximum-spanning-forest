@@ -31,8 +31,11 @@ int prims(std::shared_ptr<Graph> graph){
         dists[edges[0][i]->endpoint] = edges[0][i]->weight;
     } 
     //add n-1 more nodes
-    for (int i = 1; i < num_nodes; i++) {
+    while (true) {
         int nearest = find_nearest(dists, num_nodes);
+        if (nearest == 0){
+            return total_cost;
+        }
         total_cost += dists[nearest];
         dists[nearest] = INT_MIN;
         for (int j = 0; j < edges[nearest].size(); j++){
@@ -41,5 +44,4 @@ int prims(std::shared_ptr<Graph> graph){
             dists[vertex] = std::min(weight, dists[vertex]);
         }
     }
-    return total_cost;
 }
