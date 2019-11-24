@@ -28,12 +28,12 @@ int boruvka(std::shared_ptr<Graph> graph){
                  int component = component_labels[i];
                  //all the clauses are needed for consistency
                  if (best_edges[component] == NULL ||
-                         best_edges[component]->weight < this_edge->weight ||
+                         best_edges[component]->weight > this_edge->weight ||
                          (best_edges[component]->weight == this_edge->weight &&
-                          best_edges[component]->root < this_edge->root) ||
+                          best_edges[component]->root > this_edge->root) ||
                          (best_edges[component]->weight == this_edge->weight &&
                           best_edges[component]->root == this_edge->root &&
-                          best_edges[component]->endpoint == this_edge->endpoint)) {
+                          best_edges[component]->endpoint > this_edge->endpoint)) {
                      //lock will be needed in parallel version of this
                      best_edges[component] = this_edge;
                  }
