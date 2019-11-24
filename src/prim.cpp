@@ -8,11 +8,12 @@ int find_nearest(int *dists, int dist_len){
    int nearest = 0;
    int nearest_dist = INT_MAX;
    for (int i = 0; i < dist_len; i++){
-       if (dists[i] != INT_MIN && dists[i] < nearest_dist) {
+       if (dists[i] > INT_MIN && dists[i] < nearest_dist) {
            nearest = i;
            nearest_dist = dists[i];
        }
    }
+   return nearest;
 }
 
 int prims(std::shared_ptr<Graph> graph){
@@ -40,4 +41,5 @@ int prims(std::shared_ptr<Graph> graph){
             dists[vertex] = std::min(weight, dists[vertex]);
         }
     }
+    return total_cost;
 }
