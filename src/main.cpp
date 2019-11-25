@@ -23,7 +23,7 @@ int main(int argc, const char** argv)
     std::shared_ptr<Graph> G = load_graph(inputFile);
 
     //print_FAL_graph(G_fal, false);
-    //print_graph(G, true);
+    //print_graph(G, false);
 
     // run, time, and check correctness
     Timer t;
