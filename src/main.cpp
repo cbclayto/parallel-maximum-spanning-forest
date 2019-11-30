@@ -5,6 +5,37 @@
 #include "graph.h"
 #include "boruvka.h"
 #include "prim.h"
+#include "parallel_boruvka.h"
+
+void run_prim(std::shared_ptr<Graph> G) {
+    std::cout << "Prim's:\n";
+
+    Timer t;
+    int weight = prims(G);
+    double time = t.elapsed();
+    std::cout << "\tMST weight: " << weight << "\n";
+    printf("\tTime: %.6fms\n\n", time);
+}
+
+void run_boruvka(std::shared_ptr<Graph> G) {
+    std::cout << "Boruvka's:\n";
+
+    Timer t;
+    int weight = boruvka(G);
+    double time = t.elapsed();
+    std::cout << "\tMST weight: " << weight << "\n";
+    printf("\tTime: %.6fms\n\n", time);
+}
+
+void run_pboruvka(std::shared_ptr<Graph> G) {
+    std::cout << "Parallel Boruvka's:\n";
+
+    Timer t;
+    int weight = parallel_boruvka(G);
+    double time = t.elapsed();
+    std::cout << "\tMST weight: " << weight << "\n";
+    printf("\tTime: %.6fms\n\n", time);
+}
 
 int main(int argc, const char** argv)
 {
@@ -26,21 +57,10 @@ int main(int argc, const char** argv)
     //print_graph(G, false);
 
     // run, time, and check correctness
-    Timer t;
 
-    std::cout << "Prim's:\n";
-    int prim_weight = prims(G);
-    double primTime = t.elapsed();
-    std::cout << "\tMST weight: " << prim_weight << "\n";
-    printf("\tTime: %.6fms\n\n", primTime);
-
-    std::cout << "Boruvka's:\n";
-    t.reset();
-    int boruvka_weight = boruvka(G);
-    double boruvkaTime = t.elapsed();
-    std::cout << "\tMST weight: " << boruvka_weight << "\n";
-    printf("\tTime: %.6fms\n", boruvkaTime);
-    
+    //run_prim(G);
+    run_boruvka(G);
+    run_pboruvka(G);
 
     /*
     if (checkCorrectness(res, G)) {
