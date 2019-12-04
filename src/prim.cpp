@@ -23,17 +23,19 @@ int prims(std::shared_ptr<Graph> graph){
        dists[i] = INT_MAX;
     }
     int total_cost = 0;
-    //Add node 0 right away
-    dists[0] = INT_MIN;
+    int start_node = 0;
+    //Add start_node right away
+    dists[start_node] = INT_MIN;
 
     std::vector<std::vector<std::shared_ptr<Edge>>> edges = graph->edges;
-    for (int i = 0; i < edges[0].size(); i++){
-        dists[edges[0][i]->endpoint] = edges[0][i]->weight;
+    for (int i = 0; i < edges[start_node].size(); i++){
+        dists[edges[start_node][i]->endpoint] = edges[start_node][i]->weight;
     } 
     //add n-1 more nodes
     while (true) {
         int nearest = find_nearest(dists, num_nodes);
-        if (nearest == 0){
+        if (dists[nearest] == INT_MIN ||
+            dists[nearest] == INT_MAX){
             return total_cost;
         }
         total_cost += dists[nearest];
