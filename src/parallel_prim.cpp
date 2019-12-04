@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <omp.h>
 
-#include "prim.h"
+#include "parallel_prim.h"
 
 int find_nearest(int *dists, int offset, int dist_len){
    int nearest = 0;
@@ -26,7 +26,7 @@ void merge(int *dists, int other_thread, int thread_id, int num_nodes){
 } 
 
 
-int prims(std::shared_ptr<Graph> graph){
+int parallel_prims(std::shared_ptr<Graph> graph){
     int num_nodes = graph->num_nodes;
     std::vector<std::vector<std::shared_ptr<Edge>>> edges = graph->edges;
     int num_threads, thread_id;
@@ -35,6 +35,7 @@ int prims(std::shared_ptr<Graph> graph){
     omp_lock_t total_lock;
     omp_init_lock(&total_lock);
     int total_cost = 0;
+    printf("About to enter parallel region.\n");
     #pragma omp parallel private(thread_id) num_threads(2)
     {
        thread_id = omp_get_thread_num();

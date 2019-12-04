@@ -6,6 +6,7 @@
 #include "boruvka.h"
 #include "prim.h"
 #include "parallel_boruvka.h"
+#include "parallel_prim.h"
 
 void run_prim(std::shared_ptr<Graph> G) {
     std::cout << "Prim's:\n";
@@ -16,6 +17,17 @@ void run_prim(std::shared_ptr<Graph> G) {
     std::cout << "\tMST weight: " << weight << "\n";
     printf("\tTime: %.6fms\n\n", time);
 }
+
+void run_pprim(std::shared_ptr<Graph> G) {
+    std::cout << "Parallel Prim's:\n";
+
+    Timer t;
+    int weight = parallel_prims(G);
+    double time = t.elapsed();
+    std::cout << "\tMST weight: " << weight << "\n";
+    printf("\tTime: %.6fms\n\n", time);
+}
+
 
 void run_boruvka(std::shared_ptr<Graph> G) {
     std::cout << "Boruvka's:\n";
@@ -58,7 +70,8 @@ int main(int argc, const char** argv)
 
     // run, time, and check correctness
 
-    //run_prim(G);
+    run_prim(G);
+    run_pprim(G);
     run_boruvka(G);
     run_pboruvka(G);
 
