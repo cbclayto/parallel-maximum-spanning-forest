@@ -72,7 +72,18 @@ std::vector<std::shared_ptr<Edge>> parse_edges(std::ifstream *graph_file, std::s
     return ret;
 }
 
-// build a FAL_graph from a text file
+// check
+bool inGraph(std::vector<std::shared_ptr<Edge>> neighbors, int v) {
+    //std::vector<std::shared_ptr<Edge>> neighbors = G->edges[u];
+    for (int i = 0; i < (int)neighbors.size(); i++) {
+        std::shared_ptr<Edge> edge = neighbors[i];
+        if (edge->endpoint == v)
+            return true;
+    }
+    return false;
+}
+
+// build a graph from a text file
 std::shared_ptr<Graph> load_graph(const char* filename) {
     std::shared_ptr<Graph> G = std::make_shared<Graph>();
     std::vector<std::vector<std::shared_ptr<Edge>>> edges;
@@ -83,8 +94,8 @@ std::shared_ptr<Graph> load_graph(const char* filename) {
     std::string buffer;
 
     std::vector<int> headers = read_graph_file_header(&graph_file, &buffer);
-    G->num_edges = headers[0];
     G->num_nodes = headers[1];
+    int edge_count = 0;
 
     edges.resize(G->num_nodes);
 
@@ -96,11 +107,21 @@ std::shared_ptr<Graph> load_graph(const char* filename) {
         std::shared_ptr<Edge> e1 = es[0];
         std::shared_ptr<Edge> e2 = es[1];
 
+        // ignore duplicate edges (allows directed graphs to be parsed as undirected)
+        if (inGraph(edges[e1->root], e1->endpoint)) continue;
+        edge_count++;
+
         // add edge to both u and v in adjacency list
         edges[e1->root].push_back(e1);
         edges[e2->root].push_back(e2);
     }
 
+    if (edge_count != headers[0]) {
+        std::cout << "\nThe input graph was directed." <<
+        " It has been transformed to be undirected.\n" << headers[0] <<
+        " edges --> " << edge_count << " edges\n\n";
+    }
+    G->num_edges = edge_count;
     G->edges = edges;
     return G;
 }
@@ -165,6 +186,7 @@ void print_graph(std::shared_ptr<Graph> G, bool print_weights) {
         }
         std::cout << ">\n";
     }
+    std::cout << "\n";
 }
 
 void print_FAL_graph(std::shared_ptr<FAL_Graph> G, bool print_weights) {

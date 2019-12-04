@@ -1,2 +1,4 @@
-msf-solver: src/*.cpp
-	g++ -o msf-solver -std=c++11 -fvisibility=hidden -O3 -fopenmp src/main.cpp src/graph.cpp src/boruvka.cpp src/parallel_prim.cpp
+CFLAGS := -std=c++11 -fvisibility=hidden -O3 -fopenmp
+SOURCES := src/main.cpp src/graph.cpp src/boruvka.cpp src/parallel_prim.cpp src/parallel_boruvka.cpp
+
+g++ -o msf-solver $(CFLAGS) $(SOURCES)
