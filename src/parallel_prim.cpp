@@ -6,7 +6,7 @@
 #include "parallel_prim.h"
 
 int find_nearest(int *dists, int offset, int dist_len){
-   int nearest = 0;
+   int nearest = -1;
    int nearest_dist = INT_MAX;
    for (int i = 0; i < dist_len; i++){
        if (dists[offset + i] > INT_MIN && dists[offset + i] < nearest_dist) {
@@ -21,7 +21,7 @@ void merge(int *dists, int other_thread, int thread_id, int num_nodes){
    int offset_other = num_nodes * other_thread;
    int offset_this = num_nodes * thread_id;
    for (int i = 0; i < num_nodes; i++){
-     dists[offset_other + i] = std::min(dists[offset_other + 1], dists[offset_this + 1]);
+     dists[offset_other + i] = std::min(dists[offset_other + i], dists[offset_this + i]);
    }
 } 
 
@@ -35,15 +35,13 @@ int parallel_prims(std::shared_ptr<Graph> graph){
     omp_lock_t total_lock;
     omp_init_lock(&total_lock);
     int total_cost = 0;
-    printf("About to enter parallel region.\n");
-    #pragma omp parallel private(thread_id) num_threads(2)
+    #pragma omp parallel private(thread_id) num_threads(4)
     {
        thread_id = omp_get_thread_num();
        if (thread_id == 0){
           num_threads = omp_get_num_threads();
           dists = (int*)malloc(num_threads * num_nodes * sizeof(int));
           locks = (omp_lock_t *)malloc(num_threads * sizeof(omp_lock_t));
-          printf("There are %d threads. \n", num_threads);
        }
        #pragma omp barrier
        omp_init_lock(&locks[thread_id]);
@@ -66,12 +64,23 @@ int parallel_prims(std::shared_ptr<Graph> graph){
            while (true) {
                omp_set_lock(&locks[thread_id]);
                int nearest = find_nearest(dists, offset, num_nodes);
+              
+               //if there are no more nodes
+               if (nearest == -1) {
+                   omp_set_lock(&total_lock);
+                   total_cost += my_cost; //LOCK
+                   omp_unset_lock(&total_lock);
+                   omp_unset_lock(&locks[thread_id]);
+                   break;
+               }
+
                int other_thread = -1;
                for (int k = 0; k < num_threads; k++){
                   if (k != thread_id && dists[(num_nodes * k) + nearest] == INT_MIN){
                       other_thread = k;
                   }
                }
+
                //if we found a node another thread already found
                if (other_thread != -1){
                    omp_set_lock(&locks[other_thread]);
@@ -79,17 +88,9 @@ int parallel_prims(std::shared_ptr<Graph> graph){
                    omp_unset_lock(&locks[other_thread]);
                    my_cost += dists[offset + nearest];
                    omp_unset_lock(&locks[thread_id]);
-                   printf("Bye!\n");
-                   break;
-               }
-               //if there are no more nodes
-               if (dists[offset + nearest] == INT_MIN ||
-                   dists[offset + nearest] == INT_MAX){
                    omp_set_lock(&total_lock);
                    total_cost += my_cost; //LOCK
-                   printf("Thread %d here. The cost is %d.\n", thread_id, total_cost);
                    omp_unset_lock(&total_lock);
-                   omp_unset_lock(&locks[thread_id]);
                    break;
                }
                my_cost += dists[offset + nearest];
