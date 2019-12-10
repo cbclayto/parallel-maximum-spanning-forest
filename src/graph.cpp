@@ -91,6 +91,11 @@ std::shared_ptr<Graph> load_graph(const char* filename) {
     std::ifstream graph_file;
     graph_file.open(filename);
 
+    if (graph_file.fail()) {
+        printf("Error: File does not exist.\n");
+        exit(1);
+    }
+
     std::string buffer;
 
     std::vector<int> headers = read_graph_file_header(&graph_file, &buffer);
@@ -146,6 +151,7 @@ std::shared_ptr<FAL_Graph> load_FAL_graph(const char* filename) {
     for (int i = 0; i < G->num_nodes; i++) {
         std::shared_ptr<flexible_al> f = std::make_shared<flexible_al>();
         std::vector<std::shared_ptr<Edge>> n;
+        f->original_label = i;
         f->neighbors = n;
         f->next = NULL;
         edges[i] = f;
@@ -165,6 +171,7 @@ std::shared_ptr<FAL_Graph> load_FAL_graph(const char* filename) {
     }
 
     G->edges = edges;
+    //G->lasts = edges; // starts out with FALs of length 1
     return G;
 }
 
@@ -192,7 +199,7 @@ void print_graph(std::shared_ptr<Graph> G, bool print_weights) {
 void print_FAL_graph(std::shared_ptr<FAL_Graph> G, bool print_weights) {
     std::cout << G->num_nodes << " vertices\n";
     std::cout << G->num_edges << " edges\n";
-    for (int i = 0; i < G->num_nodes; i++) {
+    for (int i = 0; i < (int)G->edges.size(); i++) {
         std::cout << i << ": <";
         std::shared_ptr<flexible_al> adj_list = G->edges[i];
         
@@ -201,15 +208,58 @@ void print_FAL_graph(std::shared_ptr<FAL_Graph> G, bool print_weights) {
             for (int j = 0; j < (int)neighbors.size(); j++) {
                 std::shared_ptr<Edge> e = neighbors[j];
 
-                if (j > 0) std::cout << ", ";
+                std::cout << ", ";
                 if (print_weights) {
-                    std::cout << "(" << e->endpoint << ", " << e->weight << ")";
+                    std::cout << "(" << e->root << ", " << e->endpoint << ", " << e->weight << ")";
                 } else {
-                    std::cout << e->endpoint;
+                    std::cout << "(" << e->root << ", " << e->endpoint << ")";
                 }
             }
             adj_list = adj_list->next;
         }
         std::cout << ">\n";
     }
+}
+
+void print_merge_graph(std::shared_ptr<merge_graph> G, bool print_weights) {
+    std::cout << G->num_nodes << " vertices\n";
+    std::cout << G->num_edges << " edges\n";
+    for (int i = 0; i < (int)G->supervertices.size(); i++) {
+        Supervertex S = G->supervertices[i];
+        std::cout << S.label << ": <";
+        std::vector<std::shared_ptr<Edge>> neighbors = S.edges;
+        for (int j = 0; j < (int)neighbors.size(); j++) {
+            std::shared_ptr<Edge> e = neighbors[j];
+            if (e->root != S.label) printf("Graph Error!\n");
+
+            if (j > 0) std::cout << ", ";
+            if (print_weights) {
+                std::cout << "(" << e->endpoint << ", " << e->weight << ")";
+            } else {
+                std::cout << e->endpoint;
+            }
+        }
+        std::cout << ">\n";
+    }
+    std::cout << "\n";
+}
+
+int relabel_components(int *component_labels, int n, int num_nodes) {
+  int component_count = 0;
+  int *new_labels = (int*)malloc(sizeof(int) * n);
+  int old_label;
+  for (int i = 0; i < n; ++i) {
+    new_labels[i] = -1;
+  }
+
+  for (int i = 0; i < num_nodes; ++i) {
+    old_label = component_labels[i];
+    if (new_labels[old_label] == -1) {
+      new_labels[old_label] = component_count;
+      component_count++;
+    }
+    component_labels[i] = new_labels[old_label];
+  }
+  free(new_labels);
+  return component_count;
 }

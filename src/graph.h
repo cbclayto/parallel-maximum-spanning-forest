@@ -26,6 +26,9 @@ public:
 // Flexible adjacency list representation
 class flexible_al {
 public:
+    // component number
+    int original_label;
+
     // Array of neighbors
     std::vector<std::shared_ptr<Edge>> neighbors;
 
@@ -43,6 +46,27 @@ public:
 
     // Flexible adjacency list
     std::vector<std::shared_ptr<flexible_al>> edges;
+
+    // Store pointers to last FALs for each vertex
+    //std::vector<std::shared_ptr<flexible_al>> lasts;
+};
+
+class Supervertex {
+public:
+    // component number
+    int label;
+    std::vector<std::shared_ptr<Edge>> edges;
+};
+
+class merge_graph {
+public:
+    // Number of edges in the graph
+    int num_edges;
+    // Number of vertices in the graph
+    int num_nodes;
+
+    // Adjacency list
+    std::vector<Supervertex> supervertices;
 };
 
 /* Getters */
@@ -62,15 +86,10 @@ std::shared_ptr<FAL_Graph> load_FAL_graph(const char*);
 //void store_graph_binary(const char* filename, Graph);
 
 void print_graph(std::shared_ptr<Graph>, bool print_weights);
-
 void print_FAL_graph(std::shared_ptr<FAL_Graph>, bool print_weights);
+void print_merge_graph(std::shared_ptr<merge_graph>, bool print_weights);
 
 
-/* Deallocation */
-//void free_graph(Graph);
-
-
-/* Included here to enable inlining. Don't look. */
-//#include "graph_internal.h"
+int relabel_components(int *, int, int);
 
 #endif
