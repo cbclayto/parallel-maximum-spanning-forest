@@ -42,7 +42,7 @@ inline void merge_all(int *dists, int *colors, bool *merge_waits, int thread_id,
 
 int parallel_prims(std::shared_ptr<Graph> graph){
     int num_nodes = graph->num_nodes;
-    int respawn_cutoff = num_nodes; // PLACE TO OPTIMIZE
+    int respawn_cutoff = num_nodes/2; // PLACE TO OPTIMIZE
     std::vector<std::vector<std::shared_ptr<Edge>>> edges = graph->edges;
     int num_threads, thread_id;
     int *dists;
@@ -61,7 +61,7 @@ int parallel_prims(std::shared_ptr<Graph> graph){
     omp_lock_t visited_lock;
     omp_init_lock(&visited_lock);
     int total_visited = 0;
-    #pragma omp parallel private(thread_id)
+    #pragma omp parallel private(thread_id) num_threads(8)
     {
        thread_id = omp_get_thread_num();
        if (thread_id == 0){
@@ -155,7 +155,9 @@ int parallel_prims(std::shared_ptr<Graph> graph){
                   if ((num_nodes - total_visited) < respawn_cutoff){
                       break;
                   } else {
-                      while (merge_waits[(num_threads*other_thread) + thread_id]);
+                      while (merge_waits[(num_threads*other_thread) + thread_id]){
+                          usleep(10);
+                      }
                       //respawn with new start node!
                       int new_start_node = rand() % num_nodes;
                       int num_tries = 0;
