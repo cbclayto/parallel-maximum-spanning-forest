@@ -103,8 +103,7 @@ int main(int argc, const char** argv)
     //print_FAL_graph(G_fal, false);
     //print_graph(G, false);
 
-    // run, time, and check correctness
-
+    // run and time various implementations
     run_prim(G);
     run_pprim(G);
     run_sprim(G);
